@@ -1,51 +1,46 @@
-# Definition of the minimum required cmake Version
-cmake_minimum_required(VERSION 3.0)
-# Definition of the Project
-# Later you can access the project variable like ${CFDLAB_SOURCE_DIR}
-project(CFDLAB VERSION 1.0)
+cmake_minimum_required(VERSION 3.16)
+project(CFD_Parallelized_MPI)
 
-# Definition of the C++ Standard 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD 14)
 
-# You can find package likes
-# find_package(MPI)
-# Require a package
-# find_package(MPI REQUIRED)
-# Find a package with different components e.g. BOOST
-# find_package(Boost COMPONENTS filesystem REQUIRED)
+include_directories(includes)
+include_directories(tests)
+include_directories(tools/VTK_Tools)
+include_directories(tools/VTK_Tools/tests)
 
-# VTK Library
-find_package(VTK REQUIRED)
-if (NOT VTK_FOUND)
-  message("VTK not found")
-  return ()
-endif()
-message (STATUS "VTK_VERSION: ${VTK_VERSION}")
-include(${VTK_USE_FILE})
-
-# Filesystem
-set(gpp9 False)
-# set(gpp9 True)
-if(gpp9)
-    message("g++ Version is 9 or higher")
-    add_compile_definitions(gpp9)
-else()
-    message("g++ Version is lower than Version 9")
-    # Link Filesystem Libraries
-    link_libraries(stdc++fs)
-endif()
-
-
-
-# Creating the executable of our project and the required dependencies
-# the executable is called sim
-add_executable(sim main.cpp sor.cpp helper.cpp init.cpp visual.cpp boundary_val.cpp uvp.cpp grid.cpp cell.cpp parallel.cpp)
-# if you use external libraries you have to link them like 
-# target_link_libraries(sim PRIVATE MPI::MPI_CXX Boost::filesystem)
-target_link_libraries(sim PRIVATE ${VTK_LIBRARIES})
-
-# If you write tests, you can include your subdirectory (in this case tests) as done here
-# Testing
-enable_testing ()
-add_subdirectory(tests)
+add_executable(CFD_Parallelized_MPI
+        includes/boundary_val.hpp
+        includes/cell.hpp
+        includes/datastructures.hpp
+        includes/enums.hpp
+        includes/grid.hpp
+        includes/helper.hpp
+        includes/init.hpp
+        includes/parallel.hpp
+        includes/sor.hpp
+        includes/uvp.hpp
+        includes/visual.hpp
+        src/boundary_val.cpp
+        src/cell.cpp
+        src/grid.cpp
+        src/helper.cpp
+        src/init.cpp
+        src/main.cpp
+        src/parallel.cpp
+        src/sor.cpp
+        src/uvp.cpp
+        src/visual.cpp
+        tests/catch.hpp
+        tests/catch_config.hpp
+        tests/sample_test.cpp
+        tools/VTK_Tools/tests/catch.hpp
+        tools/VTK_Tools/tests/main.cpp
+        tools/VTK_Tools/tests/merge.cpp
+        tools/VTK_Tools/Compare.cpp
+        tools/VTK_Tools/cxxopts.hpp
+        tools/VTK_Tools/FileIterator.cpp
+        tools/VTK_Tools/FileIterator.hpp
+        tools/VTK_Tools/helper.hpp
+        tools/VTK_Tools/Merge.cpp
+        tools/VTK_Tools/Reader.cpp
+        tools/VTK_Tools/Reader.hpp)
